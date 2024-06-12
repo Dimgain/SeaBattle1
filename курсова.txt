@@ -1,0 +1,76 @@
+#include <iostream>
+#include <cstdlib>  
+const int N = 10;
+
+int field[N][N] = { 0 };
+
+int x, y;
+
+
+bool is_valid_position(int x, int y) {
+    if (x < 0 || x >= N || y < 0 || y >= N) {
+        return false;
+    }
+
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            if (field[x + i][y + j] == 1) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    srand(time(NULL));
+
+    int count = 0;
+    while (count < 5) {
+        int x = rand() % N;
+        int y = rand() % N;
+
+        if (is_valid_position(x, y)) {
+            field[x][y] = 1;
+            count++;
+        }
+    }
+
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            std::cout << field[j][i] << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    while (true) {
+        std::cout << "Vvedit koordunatu cili: " << std::endl;
+        std::cin >> x;
+        std::cin >> y;
+        if (field[x][y] == 1) {
+            std::cout << "vly4uv!" << std::endl;
+            field[x][y] = 0;
+
+            bool ship_detect = false;
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < N; j++) {
+                    if (field[j][i] == 1) {
+                        ship_detect = true;
+                    }
+                }
+            }
+            if (ship_detect == false) {
+                std::cout << "Vu peremoglu!!!" << std::endl;
+                break;
+            }
+
+
+        }
+        else {
+            std::cout << "Promax" << std::endl;
+        }
+    }
+
+    return 0;
+}

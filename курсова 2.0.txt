@@ -1,0 +1,131 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+const int N = 10;
+
+bool is_valid_position(int field[N][N], int x, int y) {
+    if (x < 0 || x >= N || y < 0 || y >= N) {
+        return false;
+    }
+
+    for (int i = -1; i <= 1; i++) {
+        for (int j = -1; j <= 1; j++) {
+            if (x + i >= 0 && x + i < N && y + j >= 0 && y + j < N && field[x + i][y + j] == 1) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void set_rand_ships(int field[N][N], int size_ship, int num_ships) {
+    int count_ship = 0;
+
+    while (count_ship < num_ships) {
+        int x = rand() % N;
+        int y = rand() % N;
+        int temp_x = x;
+        int temp_y = y;
+        int dir = rand() % 4;
+
+        bool setting_is_possible = true;
+        for (int i = 0; i < size_ship; i++) {
+            if (x < 0 || y < 0 || x >= N || y >= N || !is_valid_position(field, x, y)) {
+                setting_is_possible = false;
+                break;
+            }
+
+            switch (dir) {
+            case 0: x++; break;
+            case 1: y++; break;
+            case 2: x--; break;
+            case 3: y--; break;
+            }
+        }
+
+        if (setting_is_possible) {
+            x = temp_x;
+            y = temp_y;
+
+            for (int i = 0; i < size_ship; i++) {
+                field[x][y] = 1;
+                switch (dir) {
+                case 0: x++; break;
+                case 1: y++; break;
+                case 2: x--; break;
+                case 3: y--; break;
+                }
+            }
+            count_ship++;
+        }
+    }
+}
+
+void print_field(int field[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if (field[j][i] == 0) {
+                cout << '-';
+            }
+            else {
+                cout << field[j][i];
+            }
+        }
+        cout << endl;
+    }
+}
+
+bool check_victory(int field[N][N]) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            if (field[j][i] == 1) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main() {
+    srand(time(NULL)); 
+
+    int field[N][N] = { 0 };
+
+    set_rand_ships(field, 4, 1);
+    set_rand_ships(field, 3, 2);
+    set_rand_ships(field, 2, 3);
+    set_rand_ships(field, 1, 4);
+
+    print_field(field);
+
+    int x, y;
+
+    while (true) {
+        cout << "Vvedit koordunatu cili: " << endl;
+        cin >> x >> y;
+
+        if (x < 0 || x >= N || y < 0 || y >= N) {
+            cout << "Nevirni koordinati. Sprobuyte shche raz." << endl;
+            continue;
+        }
+
+        if (field[x][y] == 1) {
+            cout << "vly4uv!" << endl;
+            field[x][y] = 0;
+
+            if (check_victory(field)) {
+                cout << "Vu peremoglu!!!" << endl;
+                break;
+            }
+        }
+        else {
+            cout << "Promax" << endl;
+        }
+    }
+
+    return 0;
+}
